@@ -1,0 +1,9 @@
+---
+- name: Backup Database
+  hosts: all
+  become: true
+  tasks:
+    - name: Backup MySQL Database
+      shell: mysqldump -u root -p'password' mydatabase > /backups/mydatabase_{{ ansible_date_time.iso8601 }}.sql
+      args:
+        creates: /backups/mydatabase_{{ ansible_date_time.iso8601 }}.sql

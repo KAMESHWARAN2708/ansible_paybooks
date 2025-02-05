@@ -1,0 +1,12 @@
+---
+- name: Create users and groups
+  hosts: all
+  become: true
+  tasks:
+    - name: Create a user
+      user:
+        name: ********
+        state: present
+        groups: developers
+        shell: /bin/bash
+        password: "{{ 'Password123' | password_hash('sha512') }}"

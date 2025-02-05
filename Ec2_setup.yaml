@@ -1,0 +1,21 @@
+---
+- name: Configure EC2 Instance
+  hosts: all
+  become: true
+  tasks:
+    - name: Update apt package index
+      apt:
+        update_cache: yes
+
+    - name: Install AWS CLI
+      apt:
+        name: awscli
+        state: present
+
+    - name: Install necessary packages for monitoring
+      apt:
+        name:
+          - htop
+          - curl
+          - unzip
+        state: present

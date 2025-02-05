@@ -1,0 +1,31 @@
+---
+- name: Deploy Python Web Application
+  hosts: all
+  become: true
+  tasks:
+    - name: Install python3 and pip
+      apt:
+        name:
+          - python3
+          - python3-pip
+        state: present
+
+    - name: Install application dependencies
+      pip:
+        name:
+          - flask
+          - gunicorn
+        state: present
+
+    - name: Deploy app
+      copy:
+        src: ./app.py
+        dest: /var/www/app/app.py
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Start application with gunicorn
+      shell: gunicorn --bind 0.0.0.0:5000 app:app
+      args:
+        chdir: /var/www/app/

@@ -1,0 +1,9 @@
+---
+- name: Deploy to Kubernetes
+  hosts: localhost
+  tasks:
+    - name: Apply Kubernetes deployment
+      shell: kubectl apply -f deployment.yaml
+
+    - name: Expose the Kubernetes service
+      shell: kubectl expose deployment myapp --type=LoadBalancer --name=myapp-service

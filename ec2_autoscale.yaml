@@ -1,0 +1,11 @@
+---
+- name: Configure EC2 Auto Scaling
+  hosts: localhost
+  tasks:
+    - name: Create Auto Scaling Group
+      command:
+        cmd: aws autoscaling create-auto-scaling-group --auto-scaling-group-name my-asg --min-size 1 --max-size 3 --desired-capacity 2 --launch-configuration-name my-launch-config --vpc-zone-identifier subnet-xxxxxxx
+
+    - name: Set Scaling Policy
+      command:
+        cmd: aws autoscaling put-scaling-policy --auto-scaling-group-name my-asg --scaling-adjustment 1 --adjustment-type ChangeInCapacity --cooldown 300 --policy-name scale-up

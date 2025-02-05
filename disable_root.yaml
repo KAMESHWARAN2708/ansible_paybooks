@@ -1,0 +1,28 @@
+---
+- name: Apply Security Hardening
+  hosts: all
+  become: true
+  tasks:
+    - name: Disable root login over SSH
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PermitRootLogin'
+        line: 'PermitRootLogin no'
+        state: present
+      notify:
+        - restart ssh
+
+    - name: Ensure firewall is active
+      ufw:
+        state: enabled
+        policy: deny
+        rules:
+          - { proto: tcp, port: 22, rule: allow }
+          - { proto: tcp, port: 80, rule: allow }
+          - { proto: tcp, port: 443, rule: allow }
+
+  handlers:
+    - name: restart ssh
+      service:
+        name: ssh
+        state: restarted
