@@ -1,0 +1,20 @@
+- name: Configure Log Rotation
+  hosts: all
+  become: yes
+  tasks:
+    - name: Install logrotate
+      package:
+        name: logrotate
+        state: present
+
+    - name: Configure log rotation for /var/log/syslog
+      copy:
+        dest: /etc/logrotate.d/syslog
+        content: |
+          /var/log/syslog {
+              daily
+              rotate 7
+              compress
+              missingok
+              notifempty
+          }

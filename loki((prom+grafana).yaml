@@ -1,0 +1,43 @@
+- name: Install and Configure Promtail
+  hosts: all
+  become: yes
+  tasks:
+    - name: Download Promtail
+      get_url:
+        url: "https://github.com/grafana/loki/releases/latest/download/promtail-linux-amd64.zip"
+        dest: "/usr/local/bin/promtail-linux-amd64.zip"
+
+    - name: Extract Promtail
+      shell: |
+        unzip /usr/local/bin/promtail-linux-amd64.zip -d /usr/local/bin/
+        chmod +x /usr/local/bin/promtail-linux-amd64
+
+    - name: Configure Promtail
+      copy:
+        dest: /etc/promtail-config.yml
+        content: |
+          server:
+            http_listen_port: 9080
+            grpc_listen_port: 0
+
+          positions:
+            filename: /var/log/positions.yaml
+
+          clients:
+            - url: http://192.168.1.100:3100/loki/api/v1/push
+
+          scrape_configs:
+            - job_name: system
+              static_configs:
+                - targets:
+                    - localhost
+                  labels:
+                    job: varlogs
+                    __path__: /var/log/*log
+      notify: Restart Promtail
+
+  handlers:
+    - name: Restart Promtail
+      service:
+        name: promtail
+        state: restarted
